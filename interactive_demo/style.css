@@ -1,0 +1,657 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
+
+:root {
+    --bg-color: #050505; /* Very dark black */
+    --primary-text: #c0c0c0; /* Lighter grey for readability */
+    --secondary-text: #7a7a7a;
+    --card-bg: #111111; /* Slightly lighter black */
+    --border-color: #2a2a2a;
+    --accent-red: #8a0303; /* Crimson */
+    --accent-red-dark: #5c0202; /* Darker red for borders/shadows */
+    --accent-gold: #d4af37; /* Pale gold - USE SPARINGLY */
+    --header-bg: #000000;
+    --nav-bg: #080808;
+    --text-content-bg: rgba(10, 10, 10, 0.85); /* Darker text bg */
+
+    --card-width: 65%; /* Width of the main focused card */
+    --card-gap: 2%; /* Gap between cards */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Merriweather', serif;
+    background-color: var(--bg-color);
+    color: var(--primary-text);
+    line-height: 1.7;
+    overflow-x: hidden; /* Prevent horizontal scrollbar from carousel */
+    position: relative; /* Needed for stacking context */
+    /* Remove perspective and fixed height from body */
+    /* perspective: 1px; */
+    /* height: 100vh; */
+    /* overflow-y: scroll; */
+}
+
+/* --- Background Effects Container --- */
+#background-effects {
+    position: fixed; /* Fixed position to stay in viewport */
+    top: 0;
+    left: 0;
+    width: 100vw; /* Cover full viewport width */
+    height: 100vh; /* Cover full viewport height */
+    z-index: -1; /* Behind direct body children, but respects body stacking context */
+    overflow: hidden;
+    pointer-events: none; /* Prevent interaction */
+    /* Vignette applied directly */
+    background: radial-gradient(ellipse at center, hsla(0, 0%, 5%, 0.1) 0%, hsla(0, 0%, 5%, 0.9) 70%, hsla(0, 0%, 5%, 1) 100%);
+}
+
+/* Fog using pseudo-element */
+#background-effects::before {
+    content: '';
+    position: absolute;
+    top: -50%; 
+    left: -50%; 
+    width: 200%; 
+    height: 200%;
+    /* Smaller, denser gradient center, moves with mouse */
+    background-image: radial-gradient(ellipse 40% 50% at var(--mouse-x, 50%) var(--mouse-y, 50%), hsla(0, 80%, 35%, 0.25) 0%, hsla(0, 80%, 35%, 0) 50%); 
+    /* More subtle pulsing animation */
+    animation: pulseFog 8s infinite ease-in-out alternate; 
+    opacity: 0.9; 
+    transition: background-image 0.3s linear; /* Slightly slower mouse follow */
+    filter: blur(10px); /* Add blur to soften the fog edge */
+}
+
+@keyframes pulseFog {
+    0% {
+        transform: scale(1.0);
+        opacity: 0.6;
+    }
+    100% {
+        transform: scale(1.1);
+        opacity: 0.9;
+    }
+}
+
+/* --- Header & Navigation --- */
+header {
+    background-color: var(--header-bg);
+    color: var(--accent-red);
+    padding: 1.5em 0 1.2em 0;
+    text-align: center;
+    /* Remove bottom border if nav blends into it */
+    /* border-bottom: 2px solid var(--accent-red-dark); */ 
+    padding-bottom: 0; /* Adjust padding if border removed */
+    box-shadow: 0 3px 10px rgba(92, 2, 2, 0.4);
+    position: relative;
+    z-index: 100; /* Ensure header is above background effects */
+}
+
+header h1 {
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 700;
+    font-size: 2.8em;
+    letter-spacing: 4px;
+    text-shadow: 0 0 8px var(--accent-red);
+}
+
+nav {
+    /* Remove background color to blend */
+    /* background-color: var(--nav-bg); */ 
+    padding: 1em 0; /* Adjust padding */
+    text-align: center;
+    /* Remove bottom border */
+    /* border-bottom: 1px solid var(--border-color); */ 
+    /* Add a subtle top border to link with header */
+    border-top: 1px solid var(--border-color); 
+    position: sticky;
+    top: 0;
+    z-index: 99;
+    /* Add subtle shadow to lift it slightly */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); 
+}
+
+nav button {
+    background-color: transparent;
+    color: var(--secondary-text);
+    /* Remove default border */
+    border: none; 
+    /* Add bottom border for active state indication */
+    border-bottom: 3px solid transparent; 
+    padding: 0.7em 1em; /* Adjust padding */
+    margin: 0 1em; /* Increase spacing */
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.1em;
+    font-weight: 400;
+    cursor: pointer;
+    transition: color 0.3s ease, border-color 0.3s ease, text-shadow 0.3s ease;
+    border-radius: 0; /* Remove radius for sharper look */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+nav button:hover {
+    color: var(--primary-text);
+    /* Remove background/border changes on hover */
+    /* background-color: #1a1a1a; */
+    /* border-color: var(--accent-red); */
+    text-shadow: 0 0 5px var(--accent-red);
+    /* Keep border transparent on hover unless active */
+    border-bottom-color: transparent; 
+}
+
+/* New keyframe for active nav button pulse */
+@keyframes pulseNavActive {
+    0%, 100% {
+        text-shadow: 0 0 4px hsla(0, 90%, 45%, 0.6); /* Base glow */
+        border-bottom-color: var(--accent-red-dark);
+    }
+    50% {
+        text-shadow: 0 0 8px hsla(0, 100%, 50%, 0.9); /* Brighter glow */
+        border-bottom-color: var(--accent-red); /* Slightly brighter border */
+    }
+}
+
+nav button.active {
+    color: var(--primary-text); /* Brighter text for active */
+    /* Remove background color for active */
+    /* background-color: var(--accent-red); */
+    /* Use border-bottom for active indication */
+    border-bottom: 3px solid var(--accent-red-dark); /* Base border color for animation */
+    font-weight: 700; /* Keep bold */
+    /* Remove box-shadow */
+    /* box-shadow: 0 0 8px rgba(138, 3, 3, 0.6); */
+    /* text-shadow: none; */ /* Remove static text-shadow */
+    /* Apply the pulsing animation */
+    animation: pulseNavActive 1.8s infinite ease-in-out;
+}
+
+/* --- Main Content Area --- */
+main {
+    padding: 2.5em 1em; /* Less horizontal padding */
+    max-width: none; /* Allow full width for carousel */
+    margin: 1em auto; /* Adjust margin */
+    position: relative; /* For stacking context */
+    z-index: 10;
+    /* Add transition for category switching */
+    opacity: 1;
+    transition: opacity 0.4s ease-in-out;
+    /* Remove transform-style if parallax isn't implemented here */
+    /* transform-style: preserve-3d; */
+}
+
+main.fade-out {
+    opacity: 0;
+}
+
+#content section {
+    margin-bottom: 2.5em;
+    position: relative; /* Needed for absolute positioned arrows */
+}
+
+/* --- Item Carousel Styling --- */
+.carousel-container {
+    position: relative;
+    width: 100%;
+    /* Ensure overflow is not hidden to see glimpses */
+    overflow: visible; 
+    padding: 1em 0;
+    perspective: 1800px; /* Apply perspective here */
+    transform-style: preserve-3d; /* Apply transform-style here */
+}
+
+.carousel-track {
+    display: flex;
+    /* transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55); */ /* Use simpler ease for now */
+    transition: transform 0.7s ease-out; 
+    /* transform-style: preserve-3d; */ /* Inherited from container */
+    position: relative; /* Needed for absolute positioning of cards if required */
+}
+
+.item-card-wrapper {
+    flex: 0 0 var(--card-width);
+    margin: 0 var(--card-gap);
+    background-color: var(--card-bg);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8);
+    border: 1px solid var(--border-color);
+    transform: scale(0.8) translateZ(-300px) rotateY(35deg);
+    opacity: 0.5; /* Make non-active more faded */
+    transition: transform 0.7s ease-out, opacity 0.7s ease-out;
+    position: relative; /* For potential overlays */
+    min-height: 450px;
+}
+
+.item-card-wrapper.active {
+    opacity: 1;
+    transform: scale(1) translateZ(0px) rotateY(0deg);
+    border-color: var(--accent-red);
+    box-shadow: 0 10px 35px rgba(92, 2, 2, 0.4);
+}
+
+.item-card-wrapper.prev {
+    transform: scale(0.8) translateZ(-300px) rotateY(-35deg);
+}
+
+.item-card-wrapper.next {
+     /* Default non-active style covers next, no specific needed unless different */
+    transform: scale(0.8) translateZ(-300px) rotateY(35deg);
+}
+
+.item-card-content {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    min-height: 450px; /* Match wrapper */
+    background: linear-gradient(to right, #0a0a0a, var(--card-bg) 50%);
+}
+
+.item-image-container {
+    flex: 0 0 40%; /* Slightly smaller image */
+    max-width: 40%;
+    position: relative;
+    overflow: hidden;
+    border-right: 2px solid var(--accent-red-dark);
+}
+
+.item-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: saturate(0.6) contrast(1.1) brightness(0.8);
+    transition: transform 0.5s ease, filter 0.5s ease;
+}
+
+.item-card-wrapper.active .item-image-container img {
+    filter: saturate(0.8) contrast(1) brightness(0.95);
+    transform: scale(1.05);
+}
+
+.item-text-content {
+    flex: 1 1 auto;
+    padding: 2em 2.5em;
+    overflow-y: auto;
+    max-height: 600px; /* Limit scroll height */
+    background-color: var(--text-content-bg);
+    position: relative; /* For potential themed frames */
+}
+
+/* --- Themed Typography & Content Styling --- */
+
+/* Example: Intro quote style (using the reserved gold) */
+.intro-quote {
+    font-family: 'Cinzel Decorative', serif;
+    color: var(--accent-gold);
+    font-size: 1.3em;
+    font-style: italic;
+    text-align: center;
+    margin-bottom: 1.5em;
+    padding: 0.5em 0;
+    border-top: 1px dashed var(--accent-gold);
+    border-bottom: 1px dashed var(--accent-gold);
+    opacity: 0.8;
+}
+
+.item-text-content h3 {
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 700;
+    color: var(--accent-red);
+    margin: 0 0 0.2em 0; /* Reduced bottom margin */
+    font-size: 2em;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5em;
+    text-shadow: 0 0 5px var(--accent-red-dark);
+    text-align: left;
+    line-height: 1.2; /* Adjust line height for subtitle */
+}
+
+/* Style for the subtitle */
+.item-subtitle {
+    display: block; /* Place below the main title */
+    font-family: 'Merriweather', serif;
+    font-size: 0.6em; /* Smaller size */
+    font-weight: 400;
+    color: var(--secondary-text);
+    letter-spacing: 1px;
+    margin-top: 0.3em;
+    text-transform: uppercase;
+    text-shadow: none;
+}
+
+/* Style for the final flavor line (similar to quote) */
+.flavor-line {
+    font-family: 'Cinzel Decorative', serif; /* Or Merriweather italic */
+    color: var(--accent-gold); /* Use gold like the quote */
+    font-size: 1.1em;
+    font-style: italic;
+    text-align: center;
+    margin-top: 2em; /* Add space before it */
+    padding-top: 1em;
+    border-top: 1px dashed var(--accent-gold); 
+    opacity: 0.8;
+}
+
+.item-text-content h4 {
+    font-family: 'Cinzel Decorative', serif;
+    color: var(--primary-text);
+    margin: 1.5em 0 0.5em 0;
+    font-size: 1.4em;
+    font-weight: 400;
+    letter-spacing: 1px;
+}
+
+.item-text-content p {
+    font-size: 1em;
+    color: var(--primary-text);
+    line-height: 1.8;
+    margin-bottom: 1.2em;
+    text-align: justify;
+}
+
+.item-text-content ul {
+    list-style: none;
+    padding-left: 0.5em;
+    margin-bottom: 1.2em;
+}
+
+.item-text-content li {
+    padding-left: 1.5em;
+    position: relative;
+    margin-bottom: 0.6em;
+    color: var(--primary-text);
+}
+
+.item-text-content li::before {
+    content: '\271D'; /* Simple cross/dagger symbol */
+    color: var(--accent-red);
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1.5em;
+    position: absolute;
+    left: 0.25em;
+    top: 0.1em;
+    font-size: 1.1em;
+    opacity: 0.8;
+}
+
+.item-text-content strong {
+    color: var(--accent-red);
+    font-weight: 700;
+    /* Optional glow effect */
+    /* text-shadow: 0 0 3px var(--accent-red-dark); */
+}
+
+.item-text-content em {
+    color: var(--primary-text);
+    font-style: italic;
+    opacity: 0.9;
+}
+
+/* Add specific class for highlighting keywords if needed */
+.keyword-highlight {
+    color: var(--accent-red);
+    font-weight: bold;
+    text-shadow: 0 0 4px var(--accent-red-dark);
+    transition: text-shadow 0.3s ease;
+}
+.keyword-highlight:hover {
+     text-shadow: 0 0 8px var(--accent-red);
+}
+
+/* --- Carousel Arrows --- */
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(5, 5, 5, 0.8);
+    color: var(--secondary-text);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 55px;
+    height: 55px;
+    font-size: 2.2em;
+    cursor: pointer;
+    z-index: 50; /* Above cards */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 5px black;
+}
+
+.carousel-arrow:hover {
+    background-color: var(--accent-red);
+    color: var(--bg-color);
+    border-color: var(--accent-red-dark);
+    transform: translateY(-50%) scale(1.1);
+    text-shadow: none;
+    box-shadow: 0 0 10px var(--accent-red-dark);
+}
+
+.carousel-arrow.left {
+    left: 15px;
+}
+
+.carousel-arrow.right {
+    right: 15px;
+}
+
+.carousel-arrow:disabled {
+    opacity: 0.15;
+    cursor: default;
+    background-color: rgba(20, 20, 20, 0.7);
+    color: var(--secondary-text);
+    border-color: var(--border-color);
+    transform: translateY(-50%);
+    text-shadow: none;
+    box-shadow: none;
+}
+
+
+/* --- Footer --- */
+footer {
+    text-align: center;
+    margin-top: 4em;
+    padding: 1.5em 0;
+    color: var(--secondary-text);
+    font-size: 0.9em;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--nav-bg); /* Match nav */
+    position: relative;
+    z-index: 10;
+}
+
+/* --- Placeholder Section Styling (Initial Welcome Message) --- */
+.placeholder-section {
+    text-align: center;
+    padding: 4em 2em;
+    max-width: 700px;
+    margin: 2em auto;
+    border: 1px dashed var(--border-color);
+    border-radius: 4px;
+    background-color: rgba(10, 10, 10, 0.5);
+}
+
+.placeholder-section h2 {
+     font-family: 'Cinzel Decorative', serif;
+     color: var(--accent-red);
+     margin-bottom: 0.8em;
+     font-size: 2em;
+     border: none;
+}
+
+.placeholder-section p {
+    color: var(--primary-text);
+    font-size: 1.1em;
+}
+
+/* Example of a simple parallax layer (could be applied to header or a decorative element) */
+/* .parallax-layer {
+    transform: translateZ(-1px) scale(2); 
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: -10;
+} */
+
+/* Remove the temporary overflow class */
+/* .carousel-container.show-overflow {
+    overflow: visible;
+} */
+
+/* Style for Timeline Dates */
+.item-date {
+    display: block; /* Ensure it takes its own line */
+    font-size: 0.85em;
+    font-weight: bold;
+    color: var(--accent-color-medium);
+    margin-bottom: 0.5em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.item-text-content p,
+.item-text-content ul,
+.item-text-content ol,
+.item-text-content blockquote {
+    /* ... existing styles ... */
+}
+
+/* --- Visibility Control --- */
+.hidden {
+    display: none; /* Initially hide main content */
+    opacity: 0;
+}
+
+.visible {
+    display: block; /* Or flex/grid as appropriate */
+    opacity: 1;
+}
+
+/* Add fade-in transition for main content */
+#main-content-wrapper {
+    transition: opacity 0.8s ease-in;
+}
+
+/* --- Splash Screen Styles --- */
+#splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #050505; /* Very dark background */
+    background-image: radial-gradient(ellipse at center, hsla(0, 0%, 10%, 0.5) 0%, hsla(0, 0%, 2%, 1) 80%),
+                      url('./textures/subtle_grunge.png'); /* Subtle texture + vignette */
+    color: var(--text-color-light);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it's on top */
+    opacity: 1;
+    transition: opacity 0.8s ease-out; /* Fade out transition */
+}
+
+/* Optional: Enhanced fog/dust for splash */
+.splash-fog {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 50% 80%, hsla(0, 50%, 30%, 0.15) 0%, transparent 70%);
+    animation: pulseFog 12s infinite ease-in-out alternate; /* Slower pulse */
+    opacity: 0.6;
+    pointer-events: none; /* Allow clicks through */
+}
+
+.splash-content {
+    text-align: center;
+    z-index: 1001; /* Above splash fog */
+    animation: fadeInContent 2s ease-in 0.5s forwards; /* Fade in content after slight delay */
+    opacity: 0; /* Start hidden for animation */
+}
+
+@keyframes fadeInContent {
+    to { opacity: 1; }
+}
+
+/* New keyframe for pulsing text glow */
+@keyframes pulseTextGlow {
+    0%, 100% {
+        /* Subtle dark red glow */
+        text-shadow: 0 0 5px hsla(0, 90%, 45%, 0.5), 0 0 8px hsla(0, 90%, 30%, 0.4);
+    }
+    50% {
+        /* More intense brighter red glow */
+        text-shadow: 0 0 12px hsla(0, 100%, 55%, 0.9), 0 0 18px hsla(0, 100%, 45%, 0.7);
+    }
+}
+
+.splash-title {
+    font-family: 'Cinzel Decorative', serif; /* More ornate font */
+    font-size: calc(3rem + 3vw); /* Responsive size */
+    font-weight: 700;
+    color: var(--accent-color-light);
+    text-shadow: 0 0 8px hsla(0, 100%, 50%, 0.5), 0 0 15px hsla(0, 100%, 30%, 0.3);
+    margin-bottom: 0.2em;
+    letter-spacing: 0.1em;
+}
+
+.splash-tagline {
+    font-family: 'Lato', sans-serif;
+    font-size: calc(1rem + 0.5vw);
+    color: var(--text-color-medium);
+    margin-bottom: 2.5em;
+    letter-spacing: 0.05em;
+    font-style: italic;
+    display: none; /* Hide the tagline */
+}
+
+#enter-button {
+    font-family: 'Cinzel', serif;
+    font-size: calc(1.1rem + 0.3vw);
+    padding: 0.8em 2em;
+    background-color: transparent;
+    color: var(--accent-red); /* Make text red to enhance glow */
+    /* Static border instead of animated */
+    border: 2px solid var(--accent-red-dark); 
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    /* Apply the new text glow animation */
+    animation: pulseTextGlow 2s infinite ease-in-out;
+    /* Remove positioning/overflow needed for old pseudo-element */
+    /* position: relative; */
+    /* overflow: hidden; */
+    /* Remove old box-shadow */
+    box-shadow: none;
+}
+
+#enter-button:hover {
+    /* Pause text glow on hover */
+    animation-play-state: paused; 
+    background-color: rgba(138, 3, 3, 0.1); /* Faint red background on hover */
+    color: var(--accent-red); /* Keep text red */
+    border-color: var(--accent-red); /* Slightly brighter border on hover */
+    /* Enhanced hover text shadow instead of box shadow */
+    text-shadow: 0 0 10px hsla(0, 100%, 60%, 1), 0 0 15px hsla(0, 100%, 50%, 0.8);
+    transform: scale(1.03); /* Keep slight scale */
+}
+
+/* --- Main Content Wrapper (Adjust if needed) --- */
+/* Ensure it occupies space correctly once visible */
+/* #main-content-wrapper { ... } */
+
+/* --- Existing Styles --- */
+/* ... rest of style.css ... */ 
