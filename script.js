@@ -364,10 +364,24 @@ async function loadCategory(category) {
                         return response.text();
                     })
                     .then(text => {
-                        const descriptionHtml = isMarkdown ? parseMarkdown(text) : formatTxtContent(text);
+                        // Trim leading/trailing whitespace from the raw text
+                        const rawText = text.trim();
+                        let processedText = rawText;
+
+                        // Check if the first line of the raw text matches the item name
+                        const lines = rawText.split(/\r?\n/);
+                        if (lines.length > 0 && lines[0].trim() === item.name.trim()) {
+                            // Remove the first line (title) and potentially the second if it's blank
+                            processedText = lines.slice(lines.length > 1 && lines[1].trim() === '' ? 2 : 1).join('\n');
+                        }
+
+                        // Format the potentially modified text
+                        const formattedContent = isMarkdown ? parseMarkdown(processedText) : formatTxtContent(processedText);
+                        
+                        // Combine with optional quote/flavor line
                         const quoteHtml = item.quote ? `<p class="intro-quote">${item.quote}</p>` : '';
                         const flavorLineHtml = item.flavorLine ? `<p class="flavor-line"><em>${item.flavorLine}</em></p>` : '';
-                        return { ...item, descriptionHtml: quoteHtml + descriptionHtml + flavorLineHtml };
+                        return { ...item, descriptionHtml: quoteHtml + formattedContent + flavorLineHtml };
                     })
                     .catch(error => {
                         if (error.status === 404) {
