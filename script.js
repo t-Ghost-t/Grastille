@@ -492,11 +492,45 @@ function navigateCarousel(direction) {
 function updateCarousel() {
     if (!carouselTrack || cardElements.length === 0) return;
 
-    const cardWidthPercent = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-width').trim()) || 65;
-    const cardGapPercent = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-gap').trim()) || 2;
-    const totalCardSpacePercent = cardWidthPercent + (cardGapPercent * 2);
-    const centeringOffsetPercent = (100 - cardWidthPercent) / 2 - cardGapPercent;
-    const translateXValue = `calc(-${currentItemIndex * totalCardSpacePercent}% + ${centeringOffsetPercent}%)`;
+    let translateXValue;
+    const screenWidth = window.innerWidth;
+    const mobileBreakpoint = 768;
+
+    if (screenWidth <= mobileBreakpoint) {
+        // Mobile Centering Logic
+        const container = document.querySelector('.carousel-container');
+        if (!container) return;
+
+        const containerWidth = container.offsetWidth;
+        const activeCard = cardElements[currentItemIndex];
+        if (!activeCard) return;
+
+        const cardWidth = activeCard.offsetWidth;
+        const cardMargin = parseFloat(getComputedStyle(activeCard).marginLeft); // Get margin (assuming same left/right)
+        
+        // Calculate the starting offset of the first card
+        // This assumes cards start immediately inside the container or accounts for padding/margin if needed
+        const initialOffset = cardElements[0].offsetLeft; 
+        
+        // Calculate the center position of the active card relative to the start of the track
+        const cardCenterRelativeToTrack = activeCard.offsetLeft + (cardWidth / 2);
+
+        // Calculate the desired center position within the container
+        const containerCenter = containerWidth / 2;
+
+        // The required translation is the difference needed to align the card center with the container center
+        const translateAmountPx = containerCenter - cardCenterRelativeToTrack;
+        
+        translateXValue = `${translateAmountPx}px`;
+
+    } else {
+        // Desktop Logic (Existing)
+        const cardWidthPercent = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-width').trim()) || 65;
+        const cardGapPercent = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-gap').trim()) || 2;
+        const totalCardSpacePercent = cardWidthPercent + (cardGapPercent * 2);
+        const centeringOffsetPercent = (100 - cardWidthPercent) / 2 - cardGapPercent;
+        translateXValue = `calc(-${currentItemIndex * totalCardSpacePercent}% + ${centeringOffsetPercent}%)`;
+    }
 
     carouselTrack.style.transform = `translateX(${translateXValue})`;
 
