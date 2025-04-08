@@ -654,4 +654,101 @@ footer {
 /* #main-content-wrapper { ... } */
 
 /* --- Existing Styles --- */
-/* ... rest of style.css ... */ 
+/* ... rest of style.css ... */
+
+/* ============================
+   Mobile Responsive Styles
+   ============================ */
+
+@media (max-width: 768px) {
+    /* -- General Adjustments -- */
+    body {
+        font-size: 15px; /* Slightly smaller base font */
+    }
+
+    /* -- Header & Navigation -- */
+    header h1 {
+        font-size: 2.5em; /* Reduce header size */
+        margin-bottom: 0.8em;
+    }
+
+    nav {
+        padding: 0.5em 0; /* Reduce nav padding */
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4); /* Adjust shadow */
+    }
+
+    nav button {
+        font-size: 0.95em; /* Slightly smaller nav text */
+        margin: 0 0.5em; /* Reduce space between buttons */
+        padding: 0.6em 0.8em; /* Adjust padding */
+        border-bottom-width: 2px; /* Thinner underline */
+    }
+
+    /* -- Splash Screen -- */
+    .splash-title {
+        font-size: 3em; /* Reduce splash title size */
+    }
+
+    #enter-button {
+        font-size: calc(0.9rem + 0.3vw); /* Reduce button font size */
+        padding: 0.7em 1.8em; /* Adjust padding */
+    }
+
+    /* -- We will add Carousel/Content adjustments next -- */
+
+    /* -- Carousel Adjustments -- */
+    .carousel-container {
+        width: 95%; /* Slightly narrower container on mobile */
+        padding: 0; /* Remove padding if arrows are repositioned or smaller */
+    }
+
+    .item-card-wrapper {
+        flex: 0 0 85%; /* Make cards take up more width, showing ~1 at a time */
+        max-width: 85%;
+    }
+
+    .item-card-content {
+        flex-direction: column; /* Stack image and text vertically */
+    }
+
+    .item-image-container {
+        width: 100%; /* Make image full width of card */
+        max-width: none;
+        margin-right: 0;
+        margin-bottom: 1em; /* Add space below image */
+    }
+
+    .item-text-content {
+        padding: 0.8em; /* Reduce padding */
+    }
+
+    .item-text-content h3 {
+        font-size: 1.4em; /* Smaller card titles */
+    }
+
+    .item-subtitle {
+        font-size: 0.9em; /* Smaller subtitle */
+    }
+
+    .item-date {
+        font-size: 0.85em; /* Smaller date */
+        margin-bottom: 0.4em;
+    }
+
+    .item-text-content p, .item-text-content ul, .item-text-content blockquote {
+        font-size: 0.95em; /* Slightly smaller card text */
+        line-height: 1.5;
+    }
+    
+    .flavor-line {
+         font-size: 0.9em; /* Adjust flavor line size */
+    }
+
+    .carousel-arrow {
+        font-size: 1.5em; /* Smaller arrows */
+        padding: 0.3em 0.5em;
+        /* Optional: Adjust position if needed */
+        /* top: 40%; */ 
+    }
+
+} 
